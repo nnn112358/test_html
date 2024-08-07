@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>face</title>
+    <style>
+        body {
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 60px);
+            grid-template-rows: repeat(7, 60px);
+            gap: 5px;
+        }
+        .face {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .eyes {
+            display: flex;
+            justify-content: space-between;
+            width: 24px;
+        }
+        .eye {
+            width: 6px;
+            height: 6px;
+            background-color: #000;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .mouth {
+            width: 18px;
+            height: 2px;
+            background-color: #000;
+            position: absolute;
+            bottom: 18px;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid">
+        <!-- 49個の顔を生成 -->
+    </div>
+
+    <script>
+        const grid = document.querySelector('.grid');
+        
+        const colors = [
+            '#e0e5e5', '#FFB3BA', '#BAFFC9', '#BAE1FF', 
+            '#FFFFBA', '#FFD700', '#98FB98', '#DDA0DD'
+        ];
+
+        function createFaces() {
+            for (let i = 0; i < 49; i++) {
+                const face = document.createElement('div');
+                face.className = 'face';
+                face.innerHTML = `
+                    <div class="eyes">
+                        <div class="eye"></div>
+                        <div class="eye"></div>
+                    </div>
+                    <div class="mouth"></div>
+                `;
+                grid.appendChild(face);
+                
+                // ランダムな色を設定
+                face.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // ランダムな回転方向と速度を設定
+                const direction = Math.random() < 0.5 ? 1 : -1;
+                const speed = 5 + Math.random() * 10; // 5秒から15秒の間でランダム
+                face.style.animation = `rotate ${speed}s linear infinite ${direction === 1 ? '' : 'reverse'}`;
+            }
+        }
+
+        createFaces();
+
+        const faces = document.querySelectorAll('.face');
+
+        const expressions = [
+            // Normal
+            (face) => {
+                const eyes = face.querySelectorAll('.eye');
+                const mouth = face.querySelector('.mouth');
+                eyes.forEach(eye => {
+                    eye.style.borderRadius = '50%';
+                    eye.style.height = '6px';
+                });
+                mouth.style.height = '2px';
+                mouth.style.width = '18px';
+                mouth.style.borderRadius = '0';
+            },
+            // Happy
+            (face) => {
+                const eyes = face.querySelectorAll('.eye');
+                const mouth = face.querySelector('.mouth');
+                eyes.forEach(eye => {
+                    eye.style.borderRadius = '50%';
+                    eye.style.height = '3px';
+                });
+                mouth.style.height = '12px';
+                mouth.style.width = '18px';
+                mouth.style.borderRadius = '0 0 9px 9px';
+                mouth.style.bottom = '12px';
+            },
+            // Surprised
+            (face) => {
+                const eyes = face.querySelectorAll('.eye');
+                const mouth = face.querySelector('.mouth');
+                eyes.forEach(eye => {
+                    eye.style.borderRadius = '50%';
+                    eye.style.height = '9px';
+                });
+                mouth.style.height = '9px';
+                mouth.style.width = '9px';
+                mouth.style.borderRadius = '50%';
+                mouth.style.bottom = '15px';
+            },
+            // Sad
+            (face) => {
+                const eyes = face.querySelectorAll('.eye');
+                const mouth = face.querySelector('.mouth');
+                eyes.forEach(eye => {
+                    eye.style.borderRadius = '50%';
+                    eye.style.height = '6px';
+                });
+                mouth.style.height = '12px';
+                mouth.style.width = '18px';
+                mouth.style.borderRadius = '9px 9px 0 0';
+                mouth.style.bottom = '12px';
+            },
+            // Angry
+            (face) => {
+                const eyes = face.querySelectorAll('.eye');
+                const mouth = face.querySelector('.mouth');
+                eyes.forEach(eye => {
+                    eye.style.borderRadius = '50%';
+                    eye.style.height = '6px';
+                    eye.style.width = '9px';
+                });
+                mouth.style.height = '2px';
+                mouth.style.width = '15px';
+                mouth.style.borderRadius = '0';
+                mouth.style.transform = 'rotate(-15deg)';
+            },
+            // Wink
+            (face) => {
+                const eyes = face.querySelectorAll('.eye');
+                const mouth = face.querySelector('.mouth');
+                eyes[0].style.borderRadius = '50%';
+                eyes[0].style.height = '6px';
+                eyes[1].style.height = '2px';
+                eyes[1].style.borderRadius = '0';
+                mouth.style.height = '2px';
+                mouth.style.width = '15px';
+                mouth.style.borderRadius = '0 0 7px 7px';
+            }
+        ];
+
+        // 各顔に対して独立してランダムに表情を変更
+        faces.forEach(face => {
+            setInterval(() => {
+                const randomExpression = Math.floor(Math.random() * expressions.length);
+                expressions[randomExpression](face);
+            }, 2000 + Math.random() * 2000); // 2秒から4秒の間でランダム
+        });
+
+        // 回転アニメーションの定義
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rotate {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
